@@ -100,9 +100,9 @@
 		<data>
 		BYdftR5bFDIfJlEhLAS42pvRXKY=
 		</data>
-		<key>Resources/icon-windowed.icns</key>
+		<key>Resources/icon.icns</key>
 		<data>
-		eEHOuYpZLB0vKGVIWGZOh5rH8+o=
+		y44EyEKCAAkOKlpXEIac5Tmwkhw=
 		</data>
 		<key>Resources/lxml/isoschematron/resources/rng/iso-schematron.rng</key>
 		<data>
@@ -2232,11 +2232,11 @@
 			IJS1vd/+nPlz1h/gM4hBOATwNBYHGElKZdt+mNpA010=
 			</data>
 		</dict>
-		<key>Resources/icon-windowed.icns</key>
+		<key>Resources/icon.icns</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			uQo7VuWRab4Phv4EEGmfQsyqFqDIXZgO8OtgaAMvCzY=
+			pfGrfth+h+qRzLTehxxhnqINOM4t7qgP91br/O0TfyY=
 			</data>
 		</dict>
 		<key>Resources/lib-dynload</key>

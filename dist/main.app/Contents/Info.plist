@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>main</string>
 	<key>CFBundleIconFile</key>
-	<string>icon-windowed.icns</string>
+	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>main</string>
 	<key>CFBundleInfoDictionaryVersion</key>

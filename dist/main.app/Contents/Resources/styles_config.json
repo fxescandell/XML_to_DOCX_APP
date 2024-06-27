@@ -1,6 +1,6 @@
 {
     "Evento-Principal-Titulo": {
-        "type": "caracter",
+        "type": "parrafo",
         "style": "Evento-Principal-Titulo"
     },
     "Evento-Principal-Dia": {

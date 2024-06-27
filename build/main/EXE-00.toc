@@ -54,7 +54,7 @@
  [],
  False,
  False,
- 1719489007,
+ 1719489614,
  [('run',
    '/Users/javi/Code/XML_to_DOCX_APP/XML_to_DOCX_APP/lib/python3.12/site-packages/PyInstaller/bootloader/Darwin-64bit/run',
    'EXECUTABLE')],

@@ -36,7 +36,7 @@ exe = EXE(
     upx_exclude=[],
     runtime_tmpdir=None,
     console=True,
-    icon='resources/icon.icns'
+    icon='resources/icon.icns'  # Asegúrate de que esta línea esté presente y correcta
 )
 
 coll = BUNDLE(
@@ -47,5 +47,6 @@ coll = BUNDLE(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='main.app'
+    name='main.app',
+    icon='resources/icon.icns'  # Asegúrate de que esta línea esté presente y correcta
 )
