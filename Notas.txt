@@ -1,0 +1,37 @@
+Para ejecutar el programa en la terminal
+
+Entrar en modo virtual
+source venv/bin/activate
+
+ejecutar programa
+python extractor.py
+
+
+
+
+
+
+
+Crear y usar un entorno virtual
+Sigue estos pasos para crear y activar un entorno virtual, 
+y luego instalar el paquete necesario:
+
+Crear un entorno virtual:
+python3 -m venv ~/xml_to_docx_app_env
+
+
+
+
+Activar el entorno virtual:
+source ~/xml_to_docx_app_env/bin/activate
+
+
+Instalar python-docx en el entorno virtual:
+pip install python-docx
+
+
+Ejecutar tu programa dentro del entorno virtual:
+python /Users/javi/Code/XML_to_DOCX/main.py
+
+Desactivar el entorno virtual cuando termines:
+deactivate
