@@ -1,0 +1,1 @@
+([('main', '/Users/javi/Code/XML_to_DOCX_APP/dist/main', 'EXECUTABLE')],)

@@ -6,8 +6,6 @@ import os
 import webbrowser
 from utils import process_xml_to_docx, load_config, save_config
 
-CONFIG_FILE = 'styles_config.json'
-
 def start_gui():
     def select_xml_file():
         file_path = filedialog.askopenfilename(filetypes=[("XML files", "*.xml")])
@@ -41,13 +39,17 @@ def start_gui():
         except Exception as e:
             status_var.set("Error")
             log_message(f"Error durante el proceso: {str(e)}")
+            messagebox.showerror("Error", f"Error durante el proceso: {str(e)}")
 
     def update_config():
         config = {}
         for field, (type_var, style_var) in fields.items():
             config[field] = {'type': type_var.get(), 'style': style_var.get()}
-        save_config(config)
-        messagebox.showinfo("Información", "Configuración guardada correctamente.")
+        try:
+            save_config(config)
+            messagebox.showinfo("Información", "Configuración guardada correctamente.")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo guardar la configuración: {str(e)}")
 
     def log_message(message):
         log_text.config(state=tk.NORMAL)

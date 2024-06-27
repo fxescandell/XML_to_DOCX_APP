@@ -1,3 +1,32 @@
+# Navega al directorio del proyecto
+cd /Users/javi/Code/XML_to_DOCX_APP/
+
+# Crea el entorno virtual con el nombre del proyecto
+python3 -m venv XML_to_DOCX_APP
+
+# Activa el entorno virtual
+source XML_to_DOCX_APP/bin/activate
+
+# Instala PyInstaller
+pip install pyinstaller
+
+# Crea el ejecutable con el icono especificado
+pyinstaller --onefile --windowed --icon=resources/icon.icns main.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Para ejecutar el programa en la terminal
 
 Entrar en modo virtual
