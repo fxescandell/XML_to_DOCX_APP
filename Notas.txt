@@ -18,6 +18,8 @@ conda activate py312_x86_64
 # código para compilar x86_64
 pyinstaller main-X86.spec
 
+#Para ejecutarlo en chip Apple
+arch -x86_64 open ./dist/main.app
 
 
 

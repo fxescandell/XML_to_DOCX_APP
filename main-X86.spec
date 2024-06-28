@@ -53,17 +53,20 @@ coll = COLLECT(
 
 app = BUNDLE(
     coll,
-    name='main.app',
+    name='Agendas PX - Intel.app',
     icon='resources/icon.icns',
-    bundle_identifier='com.yourdomain.main',
+    bundle_identifier='com.escandell.agendaspintel',
     target_arch='x86_64',
     info_plist={
-        'CFBundleName': 'MainApp',
-        'CFBundleDisplayName': 'MainApp',
-        'CFBundleGetInfoString': 'MainApp',
-        'CFBundleIdentifier': 'com.yourdomain.main',
+        'CFBundleName': 'Agendas PX - Intel',
+        'CFBundleDisplayName': 'Agendas PX',
+        'CFBundleGetInfoString': 'Agendas PX - Intel 0.1.0',
+        'CFBundleIdentifier': 'com.escandell.agendaspintel',
         'CFBundleVersion': '0.1.0',
         'CFBundleShortVersionString': '0.1.0',
-        'NSHighResolutionCapable': 'True'
+        'NSHighResolutionCapable': 'True',
+        'CFBundleAuthor': 'Francesc Xavier Escandell',  # Añadir el autor
+        'CFBundleCopyright': '© 2024 Escandell.cat. All rights reserved.',
+        'CFBundleExecutable': 'main',
     }
 )
