@@ -4,16 +4,23 @@ cd /Users/javi/Code/XML_to_DOCX_APP/
 # Crea el entorno virtual con el nombre del proyecto
 python3 -m venv XML_to_DOCX_APP
 
+
+
 # Activa el entorno virtual para ejecutar y crear la aplicación en Chip Apple
 source XML_to_DOCX_APP/bin/activate
 
+# código para compilar en M1
 pyinstaller main-M1.spec
 
 
 # Activa el entorno virtual para ejecutar y crear la aplicación en Chip X86_64
 conda activate py312_x86_64
-
+# código para compilar x86_64
 pyinstaller main-X86.spec
+
+
+
+
 
 
 # Instala PyInstaller
