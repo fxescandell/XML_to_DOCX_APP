@@ -3,7 +3,7 @@
 .env
 ToDoList.md
 Notas.txt
-XML_to_DOCX_APP
-dist
-build
-__pycache__
+XML_to_DOCX_APP/
+dist/
+build/
+__pycache__/
