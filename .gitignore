@@ -1,0 +1,9 @@
+# ignore archivos básicos
+.DS_Store
+.env
+ToDoList.md
+Notas.txt
+XML_to_DOCX_APP
+dist
+build
+__pycache__
