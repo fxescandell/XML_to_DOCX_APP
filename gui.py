@@ -88,7 +88,7 @@ def start_gui():
         'actividad-titulo',
         'actividad-hora',
         'actividad-lugar',
-        'actividad-descipcion',  # Actualitzat
+        'actividad-descripcion',  # Actualitzat
         'actividad-info-extra'   # Actualitzat
     ]
 
