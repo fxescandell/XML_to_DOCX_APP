@@ -4,8 +4,8 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
 import json
 import os
-import re
 import sys
+import re
 
 def get_config_file_path():
     if hasattr(sys, '_MEIPASS'):
@@ -46,7 +46,7 @@ def apply_styles(paragraph, text, style_name, style_type, doc):
         elif style_type == 'caracter':
             style = styles.add_style(style_name, WD_STYLE_TYPE.CHARACTER)
         font = style.font
-        font.size = Pt(12)  # Ajusta el tamaño de fuente si es necesario
+        font.size = Pt(12)
 
     if style_type == 'parrafo':
         paragraph.style = style_name
@@ -59,18 +59,15 @@ def apply_styles(paragraph, text, style_name, style_type, doc):
 def clean_default_styles(doc):
     styles = doc.styles
     keep_styles = {s['style'] for s in load_config().values()}
-    keep_styles.add("Agenda-General-Parrafo")  # Incluye el estilo de párrafo general
+    keep_styles.add("Agenda-General-Parrafo")
 
     for style in list(styles):
         if style.type in (WD_STYLE_TYPE.PARAGRAPH, WD_STYLE_TYPE.CHARACTER) and style.name not in keep_styles:
             styles.element.remove(style.element)
 
 def sanitize_xml_content(content):
-    # Reemplaza & sólo si no está seguido de amp; para evitar interferir con entidades HTML válidas
     content = re.sub(r'&(?!amp;)', 'i', content)
-    replacements = {
-        # Si queremos sanitizar otros caracteres, van aquí. Ejemplo: '&': 'i',
-    }
+    replacements = {}
     for old, new in replacements.items():
         content = content.replace(old, new)
     return content
@@ -100,7 +97,7 @@ def process_combined_elements(elements, field1, field2, paragraph, config, doc):
 
     if text1:
         style_name1 = config.get(field1, {}).get('style', "Agenda-General-Parrafo")
-        style_type1 = config.get(field1, {}).get('type', 'caracter')  # Por defecto 'caracter'
+        style_type1 = config.get(field1, {}).get('type', 'caracter')
         apply_styles(paragraph, text1, style_name1, style_type1, doc)
 
     if text1 and text2:
@@ -108,40 +105,71 @@ def process_combined_elements(elements, field1, field2, paragraph, config, doc):
 
     if text2:
         style_name2 = config.get(field2, {}).get('style', "Agenda-General-Parrafo")
-        style_type2 = config.get(field2, {}).get('type', 'caracter')  # Por defecto 'caracter'
+        style_type2 = config.get(field2, {}).get('type', 'caracter')
         apply_styles(paragraph, text2, style_name2, style_type2, doc)
 
 def process_fields(parent_element, fields, doc, config):
-    processed_fields = set()
     for field in fields:
-        if field in ["Evento-Principal-Hora", "Sub-evento-Hora", "actividad-hora"]:
-            if field not in processed_fields:
-                paragraph = None
-                if field == "Evento-Principal-Hora":
-                    if parent_element.find('Evento-Principal-Hora') is not None or parent_element.find('Evento-Principal-Lugar') is not None:
-                        paragraph = doc.add_paragraph()
-                        process_combined_elements([parent_element.find('Evento-Principal-Hora'), parent_element.find('Evento-Principal-Lugar')], 'Evento-Principal-Hora', 'Evento-Principal-Lugar', paragraph, config, doc)
-                        processed_fields.update(['Evento-Principal-Hora', 'Evento-Principal-Lugar'])
-                elif field == "Sub-evento-Hora":
-                    if parent_element.find('Sub-evento-Hora') is not None or parent_element.find('Sub-evento-Lugar') is not None:
-                        paragraph = doc.add_paragraph()
-                        process_combined_elements([parent_element.find('Sub-evento-Hora'), parent_element.find('Sub-evento-Lugar')], 'Sub-evento-Hora', 'Sub-evento-Lugar', paragraph, config, doc)
-                        processed_fields.update(['Sub-evento-Hora', 'Sub-evento-Lugar'])
-                elif field == "actividad-hora":
-                    if parent_element.find('actividad-hora') is not None or parent_element.find('actividad-lugar') is not None:
-                        paragraph = doc.add_paragraph()
-                        process_combined_elements([parent_element.find('actividad-hora'), parent_element.find('actividad-lugar')], 'actividad-hora', 'actividad-lugar', paragraph, config, doc)
-                        processed_fields.update(['actividad-hora', 'actividad-lugar'])
-        else:
-            if field not in processed_fields:
-                element = parent_element.find(field)
-                if element is not None and element.text and element.text.strip():
-                    paragraph = doc.add_paragraph()
-                    style_name = config.get(field, {}).get('style', "Agenda-General-Parrafo")
-                    style_type = config.get(field, {}).get('type', 'parrafo')  # Por defecto 'parrafo'
-                    print(f"Processing field: {field} with text: {element.text.strip()}")
-                    apply_styles(paragraph, element.text.strip(), style_name, style_type, doc)
-                    processed_fields.add(field)
+        element = parent_element.find(field)
+        if element is not None and element.text and element.text.strip():
+            paragraph = doc.add_paragraph()
+            style_name = config.get(field, {}).get('style', "Agenda-General-Parrafo")
+            style_type = config.get(field, {}).get('type', 'parrafo')
+            apply_styles(paragraph, element.text.strip(), style_name, style_type, doc)
+
+def process_sub_event(sub_event, doc, config):
+    sub_event_title = sub_event.find('Sub-evento-Titulo')
+    sub_event_description = sub_event.find('Sub-evento-Descripcion')
+    sub_event_time = sub_event.find('Sub-evento-Hora')
+    sub_event_place = sub_event.find('Sub-evento-Lugar')
+    
+    if sub_event_title is not None and sub_event_title.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, sub_event_title.text.strip(), 
+                     config.get('Sub-evento-Titulo', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('Sub-evento-Titulo', {}).get('type', 'parrafo'), doc)
+
+    if sub_event_time is not None and sub_event_time.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, sub_event_time.text.strip(), 
+                     config.get('Sub-evento-Hora', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('Sub-evento-Hora', {}).get('type', 'caracter'), doc)
+
+    if sub_event_place is not None and sub_event_place.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, sub_event_place.text.strip(), 
+                     config.get('Sub-evento-Lugar', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('Sub-evento-Lugar', {}).get('type', 'caracter'), doc)
+
+    if sub_event_description is not None and sub_event_description.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, sub_event_description.text.strip(), 
+                     config.get('Sub-evento-Descripcion', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('Sub-evento-Descripcion', {}).get('type', 'parrafo'), doc)
+
+def process_activities(activities_element, doc, config):
+    for activity in activities_element.findall('actividad'):
+        activity_time = activity.find('actividad-hora')
+        activity_title = activity.find('actividad-titulo')
+        activity_description = activity.find('actividad-descipcion')
+        
+        if activity_title is not None and activity_title.text:
+            paragraph = doc.add_paragraph()
+            apply_styles(paragraph, activity_title.text.strip(), 
+                         config.get('actividad-titulo', {}).get('style', "Agenda-General-Parrafo"),
+                         config.get('actividad-titulo', {}).get('type', 'parrafo'), doc)
+
+        if activity_time is not None and activity_time.text:
+            paragraph = doc.add_paragraph()
+            apply_styles(paragraph, activity_time.text.strip(), 
+                         config.get('actividad-hora', {}).get('style', "Agenda-General-Parrafo"),
+                         config.get('actividad-hora', {}).get('type', 'caracter'), doc)
+
+        if activity_description is not None and activity_description.text:
+            paragraph = doc.add_paragraph()
+            apply_styles(paragraph, activity_description.text.strip(), 
+                         config.get('actividad-descipcion', {}).get('style', "Agenda-General-Parrafo"),
+                         config.get('actividad-descipcion', {}).get('type', 'parrafo'), doc)
 
 def process_xml_to_docx(xml_file, output_folder, output_file_name):
     print("Iniciando procesamiento del archivo XML.")
@@ -157,40 +185,32 @@ def process_xml_to_docx(xml_file, output_folder, output_file_name):
 
     doc = Document()
 
-    # Crear el estilo "Agenda-General-Parrafo"
     if "Agenda-General-Parrafo" not in [style.name for style in doc.styles]:
         general_style = doc.styles.add_style("Agenda-General-Parrafo", WD_STYLE_TYPE.PARAGRAPH)
         general_style.font.size = Pt(12)
 
     for event in root.findall('Evento-Principal'):
-        print(f"Procesando evento: {event.tag}")
-        process_fields(event, config.keys(), doc, config)
-
+        process_fields(event, ['Evento-Principal-Titulo', 'Evento-Principal-Dia', 'Evento-Principal-Hora', 'Evento-Principal-Lugar', 'Evento-Principal-Descripcion', 'Evento-Principal-info.extra'], doc, config)
+        
         programa = event.find('Evento-Principal-Programa')
         if programa is not None:
             for sub_event in programa.findall('Sub-evento'):
-                print(f"Procesando sub-evento: {sub_event.tag}")
-                process_fields(sub_event, config.keys(), doc, config)
+                process_sub_event(sub_event, doc, config)
 
-                actividades = sub_event.find('Sub-evento-actividades')
-                if actividades is not None:
-                    for actividad in actividades.findall('actividad'):
-                        print(f"Procesando actividad: {actividad.tag}")
-                        process_fields(actividad, config.keys(), doc, config)
+        actividades = event.find('Sub-evento-descripcion')
+        if actividades is not None:
+            process_activities(actividades, doc, config)
 
-    # Limpiar los estilos por defecto
     clean_default_styles(doc)
 
-    # Aplicar el estilo "Agenda-General-Parrafo" a todos los párrafos
     for paragraph in doc.paragraphs:
-        if paragraph.style is None or paragraph.style.name == 'Normal':  # Cambiar el estilo Normal por defecto a Agenda-General-Parrafo
+        if paragraph.style is None or paragraph.style.name == 'Normal':
             paragraph.style = "Agenda-General-Parrafo"
 
     output_path = os.path.join(output_folder, output_file_name)
     doc.save(output_path)
     print(f"Documento guardado en {output_path}")
 
-    # Eliminar el archivo sanitizado después del procesamiento
     if os.path.exists(sanitized_file):
         os.remove(sanitized_file)
         print(f"Archivo sanitizado {sanitized_file} eliminado.")
