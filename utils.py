@@ -117,17 +117,63 @@ def process_fields(parent_element, fields, doc, config):
             style_type = config.get(field, {}).get('type', 'parrafo')
             apply_styles(paragraph, element.text.strip(), style_name, style_type, doc)
 
+def process_activity(activity, doc, config):
+    activity_time = activity.find('actividad-hora')
+    activity_title = activity.find('actividad-titulo')
+    activity_place = activity.find('actividad-lugar')
+    activity_description = activity.find('actividad-descipcion')
+    activity_extra_info = activity.find('actividad-info-extra')
+    
+    if activity_title is not None and activity_title.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, activity_title.text.strip(), 
+                     config.get('actividad-titulo', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('actividad-titulo', {}).get('type', 'parrafo'), doc)
+
+    if activity_time is not None and activity_time.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, activity_time.text.strip(), 
+                     config.get('actividad-hora', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('actividad-hora', {}).get('type', 'caracter'), doc)
+    
+    if activity_place is not None and activity_place.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, activity_place.text.strip(), 
+                     config.get('actividad-lugar', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('actividad-lugar', {}).get('type', 'caracter'), doc)
+
+    if activity_description is not None and activity_description.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, activity_description.text.strip(), 
+                     config.get('actividad-descipcion', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('actividad-descipcion', {}).get('type', 'parrafo'), doc)
+    
+    if activity_extra_info is not None and activity_extra_info.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, activity_extra_info.text.strip(), 
+                     config.get('actividad-info-extra', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('actividad-info-extra', {}).get('type', 'parrafo'), doc)
+
 def process_sub_event(sub_event, doc, config):
     sub_event_title = sub_event.find('Sub-evento-Titulo')
-    sub_event_description = sub_event.find('Sub-evento-Descripcion')
+    sub_event_day = sub_event.find('Sub-evento-Dia')
     sub_event_time = sub_event.find('Sub-evento-Hora')
     sub_event_place = sub_event.find('Sub-evento-Lugar')
+    sub_event_description = sub_event.find('Sub-evento-descripcion')
+    sub_event_extra_info = sub_event.find('Sub-evento-info-extra')
+    sub_event_activities = sub_event.find('Sub-evento-actividades')
     
     if sub_event_title is not None and sub_event_title.text:
         paragraph = doc.add_paragraph()
         apply_styles(paragraph, sub_event_title.text.strip(), 
                      config.get('Sub-evento-Titulo', {}).get('style', "Agenda-General-Parrafo"),
                      config.get('Sub-evento-Titulo', {}).get('type', 'parrafo'), doc)
+
+    if sub_event_day is not None and sub_event_day.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, sub_event_day.text.strip(), 
+                     config.get('Sub-evento-Dia', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('Sub-evento-Dia', {}).get('type', 'parrafo'), doc)
 
     if sub_event_time is not None and sub_event_time.text:
         paragraph = doc.add_paragraph()
@@ -144,32 +190,18 @@ def process_sub_event(sub_event, doc, config):
     if sub_event_description is not None and sub_event_description.text:
         paragraph = doc.add_paragraph()
         apply_styles(paragraph, sub_event_description.text.strip(), 
-                     config.get('Sub-evento-Descripcion', {}).get('style', "Agenda-General-Parrafo"),
-                     config.get('Sub-evento-Descripcion', {}).get('type', 'parrafo'), doc)
+                     config.get('Sub-evento-descripcion', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('Sub-evento-descripcion', {}).get('type', 'parrafo'), doc)
 
-def process_activities(activities_element, doc, config):
-    for activity in activities_element.findall('actividad'):
-        activity_time = activity.find('actividad-hora')
-        activity_title = activity.find('actividad-titulo')
-        activity_description = activity.find('actividad-descipcion')
-        
-        if activity_title is not None and activity_title.text:
-            paragraph = doc.add_paragraph()
-            apply_styles(paragraph, activity_title.text.strip(), 
-                         config.get('actividad-titulo', {}).get('style', "Agenda-General-Parrafo"),
-                         config.get('actividad-titulo', {}).get('type', 'parrafo'), doc)
+    if sub_event_extra_info is not None and sub_event_extra_info.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, sub_event_extra_info.text.strip(), 
+                     config.get('Sub-evento-info-extra', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('Sub-evento-info-extra', {}).get('type', 'parrafo'), doc)
 
-        if activity_time is not None and activity_time.text:
-            paragraph = doc.add_paragraph()
-            apply_styles(paragraph, activity_time.text.strip(), 
-                         config.get('actividad-hora', {}).get('style', "Agenda-General-Parrafo"),
-                         config.get('actividad-hora', {}).get('type', 'caracter'), doc)
-
-        if activity_description is not None and activity_description.text:
-            paragraph = doc.add_paragraph()
-            apply_styles(paragraph, activity_description.text.strip(), 
-                         config.get('actividad-descipcion', {}).get('style', "Agenda-General-Parrafo"),
-                         config.get('actividad-descipcion', {}).get('type', 'parrafo'), doc)
+    if sub_event_activities is not None:
+        for activity in sub_event_activities.findall('actividad'):
+            process_activity(activity, doc, config)
 
 def process_xml_to_docx(xml_file, output_folder, output_file_name):
     print("Iniciando procesamiento del archivo XML.")
@@ -190,16 +222,19 @@ def process_xml_to_docx(xml_file, output_folder, output_file_name):
         general_style.font.size = Pt(12)
 
     for event in root.findall('Evento-Principal'):
-        process_fields(event, ['Evento-Principal-Titulo', 'Evento-Principal-Dia', 'Evento-Principal-Hora', 'Evento-Principal-Lugar', 'Evento-Principal-Descripcion', 'Evento-Principal-info.extra'], doc, config)
+        process_fields(event, [
+            'Evento-Principal-Titulo',
+            'Evento-Principal-Dia',
+            'Evento-Principal-Hora',
+            'Evento-Principal-Lugar',
+            'Evento-Principal-Descripcion',
+            'Evento-Principal-info-extra'
+        ], doc, config)
         
         programa = event.find('Evento-Principal-Programa')
         if programa is not None:
             for sub_event in programa.findall('Sub-evento'):
                 process_sub_event(sub_event, doc, config)
-
-        actividades = event.find('Sub-evento-descripcion')
-        if actividades is not None:
-            process_activities(actividades, doc, config)
 
     clean_default_styles(doc)
 
