@@ -12,6 +12,7 @@ source XML_to_DOCX_APP/bin/activate
 # código para compilar en M1
 pyinstaller main-M1.spec
 
+----------------
 
 # Activa el entorno virtual para ejecutar y crear la aplicación en Chip X86_64
 conda activate py312_x86_64
@@ -21,6 +22,15 @@ pyinstaller main-X86.spec
 #Para ejecutarlo en chip Apple
 arch -x86_64 open ./dist/main.app
 
+
+----------------
+# To activate this environment, use                                                                                 
+#                                                                                                                   
+#     $ conda activate py312_x86_64                                                                                 
+#                                                                                                                   
+# To deactivate an active environment, use                                                                          
+#                                                                                                                   
+#     $ conda deactivate
 
 
 

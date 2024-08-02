@@ -30,7 +30,6 @@ def start_gui():
             output_file_name += ".docx"
 
         status_var.set("Procesando...")
-        log_message("Iniciando proceso...")
 
         try:
             process_xml_to_docx(xml_file, output_folder, output_file_name)
@@ -88,11 +87,10 @@ def start_gui():
         'actividad-titulo',
         'actividad-hora',
         'actividad-lugar',
-        'actividad-descripcion',  # Actualitzat
-        'actividad-info-extra'   # Actualitzat
+        'actividad-descripcion',
+        'actividad-info-extra'
     ]
 
-    # Left column for XML fields and style settings
     left_frame = tk.Frame(root)
     left_frame.grid(row=0, column=0, padx=10, pady=10, sticky='n')
 
@@ -103,7 +101,7 @@ def start_gui():
         tk.Label(left_frame, text=field).grid(row=idx + 2, column=0, padx=10, pady=5)
         
         type_var = tk.StringVar(value=config.get(field, {}).get('type', 'caracter'))
-        style_var = tk.StringVar(value=config.get(field, {}).get('style', field))  # Default style name to field name
+        style_var = tk.StringVar(value=config.get(field, {}).get('style', field))
 
         tk.Radiobutton(left_frame, text="Párrafo", variable=type_var, value='parrafo').grid(row=idx + 2, column=1, padx=5)
         tk.Radiobutton(left_frame, text="Carácter", variable=type_var, value='caracter').grid(row=idx + 2, column=2, padx=5)
@@ -113,7 +111,6 @@ def start_gui():
 
     tk.Button(left_frame, text="Guardar estilos", command=update_config).grid(row=len(xml_structure) + 2, column=0, columnspan=4, pady=20)
 
-    # Right column for file selection and processing buttons
     right_frame = tk.Frame(root)
     right_frame.grid(row=0, column=1, padx=10, pady=10, sticky='n')
 
@@ -135,7 +132,6 @@ def start_gui():
 
     tk.Label(right_frame, textvariable=status_var).grid(row=6, column=1, padx=10, pady=10)
 
-    # Log Text Area
     log_frame = tk.Frame(right_frame)
     log_frame.grid(row=7, column=0, columnspan=3, padx=10, pady=10, sticky='ew')
 
@@ -146,7 +142,6 @@ def start_gui():
     log_scroll.grid(row=1, column=1, sticky='ns')
     log_text['yscrollcommand'] = log_scroll.set
 
-    # Footer
     footer_frame = tk.Frame(right_frame)
     footer_frame.grid(row=8, column=0, columnspan=3, padx=10, pady=10, sticky='ew')
     

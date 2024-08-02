@@ -15,18 +15,14 @@ def get_config_file_path():
 
 def load_config():
     config_file = get_config_file_path()
-    print(f"Intentando cargar configuración desde {config_file}")
     if os.path.exists(config_file):
         try:
             with open(config_file, 'r') as f:
                 config = json.load(f)
-                print(f"Configuración cargada: {config}")
                 return config
-        except json.JSONDecodeError as e:
-            print(f"Error al decodificar JSON: {e}")
+        except json.JSONDecodeError:
             return {}
     else:
-        print(f"Archivo de configuración no encontrado: {config_file}")
         return {}
 
 def save_config(config):
@@ -34,7 +30,6 @@ def save_config(config):
     try:
         with open(config_file, 'w') as f:
             json.dump(config, f, indent=4)
-        print(f"Configuración guardada en {config_file}")
     except Exception as e:
         print(f"Error al guardar la configuración: {e}")
 
@@ -57,7 +52,6 @@ def apply_styles(paragraph, text, style_name, style_type, doc):
     elif style_type == 'caracter':
         run = paragraph.add_run(text)
         run.style = style_name
-    print(f"Applied style {style_name} with text: {text}")
 
 def clean_default_styles(doc):
     styles = doc.styles
@@ -116,12 +110,18 @@ def process_fields(parent_element, fields, doc, config):
             apply_styles(paragraph, element.text.strip(), style_name, style_type, doc)
 
 def process_activity(activity, doc, config):
-    activity_time = activity.find('actividad-hora')
     activity_title = activity.find('actividad-titulo')
+    activity_time = activity.find('actividad-hora')
     activity_place = activity.find('actividad-lugar')
     activity_description = activity.find('actividad-descripcion')
     activity_extra_info = activity.find('actividad-info-extra')
-    
+
+    if activity_title is not None and activity_title.text:
+        paragraph = doc.add_paragraph()
+        apply_styles(paragraph, activity_title.text.strip(), 
+                     config.get('actividad-titulo', {}).get('style', "Agenda-General-Parrafo"),
+                     config.get('actividad-titulo', {}).get('type', 'parrafo'), doc)
+
     if activity_time is not None or activity_place is not None:
         paragraph = doc.add_paragraph()
         text1 = activity_time.text.strip() if activity_time is not None and activity_time.text else ""
@@ -129,12 +129,6 @@ def process_activity(activity, doc, config):
         style1 = config.get('actividad-hora', {}).get('style', "Agenda-General-Parrafo")
         style2 = config.get('actividad-lugar', {}).get('style', "Agenda-General-Parrafo")
         process_combined_elements(paragraph, text1, text2, style1, style2, doc)
-
-    if activity_title is not None and activity_title.text:
-        paragraph = doc.add_paragraph()
-        apply_styles(paragraph, activity_title.text.strip(), 
-                     config.get('actividad-titulo', {}).get('style', "Agenda-General-Parrafo"),
-                     config.get('actividad-titulo', {}).get('type', 'parrafo'), doc)
 
     if activity_description is not None and activity_description.text:
         paragraph = doc.add_paragraph()
@@ -234,14 +228,12 @@ def process_event(event, doc, config):
                      config.get('Evento-Principal-info-extra', {}).get('type', 'parrafo'), doc)
 
 def process_xml_to_docx(xml_file, output_folder, output_file_name):
-    print("Iniciando procesamiento del archivo XML.")
     sanitized_file = create_sanitized_copy(xml_file)
     if not validate_xml_file(sanitized_file):
         print("Error: El archivo XML no está bien formateado después de la sanitización.")
         return
 
     config = load_config()
-    print("Configuración cargada:", config)
     tree = ET.parse(sanitized_file)
     root = tree.getroot()
 
@@ -267,8 +259,6 @@ def process_xml_to_docx(xml_file, output_folder, output_file_name):
 
     output_path = os.path.join(output_folder, output_file_name)
     doc.save(output_path)
-    print(f"Documento guardado en {output_path}")
 
     if os.path.exists(sanitized_file):
         os.remove(sanitized_file)
-        print(f"Archivo sanitizado {sanitized_file} eliminado.")
