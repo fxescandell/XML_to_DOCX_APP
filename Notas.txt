@@ -24,6 +24,21 @@ arch -x86_64 open ./dist/main.app
 
 
 ----------------
+
+
+arch -x86_64 /bin/bash                          # esto abre un terminal en x86
+conda create -n pyenv_x86_64 python=3.12.4      # esto crea un entorno 
+conda init                                      # inicia en conda
+conda activate pyenv_x86_64                     # activa el entorno
+conda deactivate                                # desactiv el entorno
+
+
+
+
+
+
+
+
 # To activate this environment, use                                                                                 
 #                                                                                                                   
 #     $ conda activate py312_x86_64                                                                                 
