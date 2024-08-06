@@ -5,9 +5,7 @@ block_cipher = None
 a = Analysis(
     ['main.py'],
     pathex=['/Users/javi/Code/XML_to_DOCX_APP'],
-    binaries=[
-        ('/ruta/a/tu/libpython3.12.dylib', '.'),  # Añadir esta línea
-    ],
+    binaries=[],
     datas=[
         ('styles_config.json', '.'),
         ('utils.py', '.'),
